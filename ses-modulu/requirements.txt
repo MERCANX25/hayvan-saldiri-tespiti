@@ -1,0 +1,9 @@
+tensorflow
+tensorflow-hub
+setuptools<81
+numpy
+librosa
+soundfile
+soundcard
+yt-dlp
+imageio-ffmpeg
