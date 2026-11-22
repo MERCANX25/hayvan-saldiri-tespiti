@@ -1,0 +1,64 @@
+VERI KAYNAKLARI (ses modulu)
+=============================
+
+Bu dosya, egitim verisinin NEREDEN geldigini ve hangi dosyalarin kim tarafindan
+indirildigini anlatir. Ses dosyalarinin kendisi repoya EKLENMEZ (boyutu buyuk ve
+bazilari telifli). Veriyi kendiniz indirip ayni duzende bir "veri" klasorunde toplayin.
+
+1. VGGSound  (YouTube kaynakli, saldirgan ve kurban sesleri)
+-----------------------------------------------------------
+- Kaynak makale : Chen ve ark., "VGGSound: A Large-scale Audio-Visual Dataset", ICASSP 2020
+                  https://arxiv.org/abs/2004.14368
+- Klip listesi  : https://github.com/hche11/VGGSound/blob/master/data/vggsound.csv
+                  (her satir: YouTube video ID, baslangic saniyesi, sinif, train/test bolumu)
+- Lisans        : CC BY 4.0 (klip listesi). Videolarin telifi sahiplerine aittir.
+- Ne indirildi  : sinif basina en fazla 40 klip (saldirgan, kurban grubu), normal ve arka plan
+                  gruplarindan 10'ar klip. Her klip 10 saniyedir.
+- Indirme aracı : veri_seti_olustur.py (yt-dlp ile, YouTube'dan sadece ilgili 10 saniye)
+
+  Ilk calistirmada inen klipler (sinif : klip sayisi):
+    dog growling      : 20   (saldirgan)
+    cat growling      : 20   (saldirgan)
+    cat hissing       : 20   (saldirgan)
+    lions roaring     : 20   (saldirgan)
+    lions growling    :  9   (saldirgan)
+    people screaming  :  1   (kurban)
+    raining           :  1   (arka_plan)
+  Not: YouTube "bot musunuz" engeli nedeniyle indirme yarida kalmistir. Diger siniflar
+  (dog whimpering, dog barking, cat meowing vb.) henuz indirilmemistir.
+
+2. ESC-50  (GitHub kaynakli, normal hayvan ve arka plan sesleri)
+----------------------------------------------------------------
+- Kaynak makale : Piczak, K. J., "ESC: Dataset for Environmental Sound Classification", ACM Multimedia 2015
+- Depo          : https://github.com/karolpiczak/ESC-50
+- Etiket dosyasi: https://raw.githubusercontent.com/karolpiczak/ESC-50/master/meta/esc50.csv
+- Ses dosyalari : https://raw.githubusercontent.com/karolpiczak/ESC-50/master/audio/
+- Lisans        : CC BY-NC 3.0 (ticari olmayan kullanim)
+- Ne indirildi  : asagidaki kategorilerden kategori basina en fazla 40 klip (5 sn, 44.1 kHz WAV,
+                  16 kHz mono'ya cevrildi)
+    normal_hayvan : dog, cat, pig, cow, rooster, hen, sheep
+    arka_plan     : rain, wind, footsteps, laughing, clapping, car_horn, engine, train,
+                    door_wood_knock, keyboard_typing
+- Indirme aracı : veri_seti_olustur.py --esc50
+
+3. Hangi dosya hangi kaynaktan?
+-------------------------------
+Indirme sirasinda olusan "veri" klasorunde:
+- veri/metadata.csv         : TUM klipler. Sutunlar: dosya, sinif, grup, bolum, youtube_id, baslangic
+- veri/vggsound_metadata.csv: sadece VGGSound klipleri
+- veri/esc50_metadata.csv   : sadece ESC-50 klipleri (youtube_id sutununda "esc50_<kayit no>" yazar)
+- veri/silinmis_videolar.txt: indirilemeyen YouTube videolarinin listesi (silinmis ya da erisime kapali)
+
+Dosya adlari: VGGSound icin "sinif__YouTubeID_saniye.wav", ESC-50 icin "esc50_kategori__dosyaadi.wav".
+
+4. Test icin YouTube baglantilari
+---------------------------------
+ses-modulu/test-videolari.md : VGGSound test bolumunden secilmis, dogrudan izlenebilir baglantilar.
+
+5. Tekrar uretmek icin
+----------------------
+  python ses-modulu/veri_seti_olustur.py --esc50
+  python ses-modulu/veri_seti_olustur.py --adet 40 --gruplar saldirgan,kurban --paralel 1
+  python ses-modulu/veri_seti_olustur.py --adet 10 --gruplar normal_hayvan,arka_plan --paralel 1
+
+Not: YouTube'dan indirirken engel gelirse 30-60 dakika bekleyip ayni komutu tekrar calistirin.
