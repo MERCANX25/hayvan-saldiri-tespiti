@@ -32,6 +32,7 @@ ORNEK_HIZI = 16000
 PENCERE_SN = 1.0
 ADIM_SN = 0.5
 YUMUSATMA = 3  # son kac pencerenin ortalamasi alinsin
+SESSIZ_ESIK = 0.001  # bu seviyenin altindaki pencerelerde karar verilmez
 
 
 class Siniflandirici:
@@ -84,13 +85,16 @@ class Analizci:
 
     def isle(self, ses, t):
         seviye = float(np.sqrt(np.mean(ses**2)))
+        if seviye < SESSIZ_ESIK:
+            # Ses yoksa karar verme: sessizlik "normal" demek degildir
+            print(f"{t:7.1f}s | seviye {seviye:.3f} | SES YOK - karar verilmedi", flush=True)
+            return
         _, gomu, _ = self.yamnet(ses.astype(np.float32))
         self.gecmis.append(self.sinif.olasilik(gomu.numpy()))
         p = np.mean(self.gecmis, axis=0)
         durum = self.alarm.guncelle(t, p[0], p[1])
         parcalar = " | ".join(f"{g} {v:.2f}" for g, v in zip(self.sinif.gruplar, p))
-        sessiz = "  (SESSIZ)" if seviye < 0.001 else ""
-        print(f"{t:7.1f}s | seviye {seviye:.3f} | {parcalar} | {durum}{sessiz}", flush=True)
+        print(f"{t:7.1f}s | seviye {seviye:.3f} | {parcalar} | {durum}", flush=True)
 
 
 def dosya_modu(yol, analizci):
