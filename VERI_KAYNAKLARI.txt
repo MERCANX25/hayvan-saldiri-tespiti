@@ -62,3 +62,17 @@ ses-modulu/test-videolari.md : VGGSound test bolumunden secilmis, dogrudan izlen
   python ses-modulu/veri_seti_olustur.py --adet 10 --gruplar normal_hayvan,arka_plan --paralel 1
 
 Not: YouTube'dan indirirken engel gelirse 30-60 dakika bekleyip ayni komutu tekrar calistirin.
+
+6. Son durum (22 Kasim 2026, kullanicinin bilgisayarindaki veri klasoru)
+-------------------------------------------------------------------------
+Grup bazinda toplam klip sayisi (metadata.csv):
+    saldirgan     :  89   (VGGSound)
+    kurban        :  80   (VGGSound: people screaming 40, dog whimpering 40)
+    normal_hayvan : 480   (ESC-50 280 + VGGSound 200, hesaplanmis dagilim)
+    arka_plan     : 560   (ESC-50 400 + VGGSound 160, hesaplanmis dagilim)
+    TOPLAM        : 1209 klip
+
+Not: Saldirgan siniflarinin kendi sayilari (dog growling, cat growling, cat hissing,
+lions roaring, lions growling) bu toplamin icinde; son durumda ayri ayri sayilmadi.
+Metadata'nin tam listesi icin --adet 40 ile calistirmak gerekir (--adet 20 kullanilirsa
+kurban ve saldirgan siniflari sinif basina 20'ye kadar kesilir ama dosyalar silinmez).
