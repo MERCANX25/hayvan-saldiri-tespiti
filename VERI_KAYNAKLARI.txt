@@ -66,7 +66,7 @@ Not: YouTube'dan indirirken engel gelirse 30-60 dakika bekleyip ayni komutu tekr
 6. Son durum (22 Kasim 2026, kullanicinin bilgisayarindaki veri klasoru)
 -------------------------------------------------------------------------
 Grup bazinda toplam klip sayisi (metadata.csv):
-    saldirgan     :  89   (VGGSound)
+    saldirgan     :  89   (VGGSound; sonra 200'e tamamlandi, bkz. bolum 7)
     kurban        :  80   (VGGSound: people screaming 40, dog whimpering 40)
     normal_hayvan : 480   (ESC-50 280 + VGGSound 200, hesaplanmis dagilim)
     arka_plan     : 560   (ESC-50 400 + VGGSound 160, hesaplanmis dagilim)
@@ -76,3 +76,32 @@ Not: Saldirgan siniflarinin kendi sayilari (dog growling, cat growling, cat hiss
 lions roaring, lions growling) bu toplamin icinde; son durumda ayri ayri sayilmadi.
 Metadata'nin tam listesi icin --adet 40 ile calistirmak gerekir (--adet 20 kullanilirsa
 kurban ve saldirgan siniflari sinif basina 20'ye kadar kesilir ama dosyalar silinmez).
+
+7. Egitim sonuclari (Colab, 22 Kasim 2026)
+------------------------------------------
+Model: YAMNet gomuleri + Dense(256, ReLU) + Dropout(0.3) + Dense(4, softmax).
+Bolme: sinif/grup dengeli, ayni YouTube videosu hep ayni bolumde (StratifiedGroupKFold).
+
+Veri guncellemesi sonrasi toplam: saldirgan 200, kurban 80, normal_hayvan 480, arka_plan 560
+(toplam 1320 klip; saldirgan sinif basina 40'a tamamlandi).
+
+                         Ilk egitim (1209 klip)   Son egitim (1320 klip)
+  Test klip sayisi              234                      265
+  Dogruluk                      0.829                    0.808
+  Makro F1                      0.735                    0.752
+  Egitimsiz YAMNet (kural)      0.778 / 0.616 (dogr./F1) 0.766 / 0.639
+
+Son egitim, test seti (1320 klip):
+                precision  recall  f1-score  destek
+  saldirgan        0.53     0.73     0.62      33
+  kurban           0.63     0.74     0.68      23
+  normal_hayvan    0.82     0.80     0.81      91
+  arka_plan        0.96     0.85     0.90     118
+
+Ilk egitimde saldirgan kesinligi 0.44, kurban kesinligi 0.50 idi.
+Not: Iki kosunun test setleri farkli oldugu icin birebir karsilastirilamaz. Saldirgan ve kurban
+test setleri kucuk (33 ve 23 klip), yuzdeler birkac klipte oynar. Zayif nokta: saldirgan sinifinda
+yanlis alarm (kesinlik 0.53).
+
+Canli demo (canli_demo.py): ses seviyesi esigin altindaysa "SES YOK - karar verilmedi" yazilir,
+"normal" denmez. Alarm esikleri degismedi (saldirgan 0.5, kurban 0.5, 4 sn kurban penceresi).
